@@ -546,11 +546,20 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager {
 
             //5.0以下的手机会产生错位再次判断
             if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
-                if(lastVisible>mLastVisible || firstVisible<mFirstVisible){
-                    view.setVisibility(View.GONE);
+                if (VERTICAL == mOrientation) {
+                    if(lastVisible!=mLastVisible || firstVisible!=mFirstVisible){
+                        view.setVisibility(View.GONE);
+                    }else{
+                        view.setVisibility(View.VISIBLE);
+                    }
                 }else{
-                    view.setVisibility(View.VISIBLE);
+                    if(lastVisible>mLastVisible || firstVisible<mFirstVisible){
+                        view.setVisibility(View.GONE);
+                    }else{
+                        view.setVisibility(View.VISIBLE);
+                    }
                 }
+
                 mLastVisible=lastVisible;
                 mFirstVisible=firstVisible;
             }
