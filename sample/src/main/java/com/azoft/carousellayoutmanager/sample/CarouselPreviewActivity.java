@@ -35,7 +35,8 @@ public class CarouselPreviewActivity extends AppCompatActivity {
         adapter.setContext(mActivity);
 
         initRecyclerView((RecyclerView) findViewById(R.id.list_horizontal), new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, false), adapter);
-        //initRecyclerView((RecyclerView)findViewById(R.id.list_vertical), new MyCarouselLayoutManager(CarouselLayoutManager.VERTICAL, true), adapter);
+
+        initRecyclerView((RecyclerView)findViewById(R.id.list_vertical), new CarouselLayoutManager(CarouselLayoutManager.VERTICAL, true), adapter);
 
         findViewById(R.id.fab_scroll).setOnClickListener(new View.OnClickListener() {
             @Override
