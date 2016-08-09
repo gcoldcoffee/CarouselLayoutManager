@@ -35,7 +35,7 @@ public class CarouselPreviewActivity extends Activity {
         mActivity=this;
 
         recyclerView=(RecyclerView) findViewById(R.id.list_horizontal);
-        initRecyclerView(recyclerView, new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, false));
+        initRecyclerView(recyclerView, new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, true));
 
         initRecyclerView((RecyclerView) findViewById(R.id.list_vertical), new CarouselLayoutManager(CarouselLayoutManager.VERTICAL, true));
 

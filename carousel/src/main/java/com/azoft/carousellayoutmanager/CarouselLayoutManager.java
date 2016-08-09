@@ -42,7 +42,8 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager {
     public static final int VERTICAL = OrientationHelper.VERTICAL;
 
     //用于5.0以下手机显示错位判断
-    private int mLastVisible=0,mFirstVisible=0;
+    private int mLastVisible1=0,mFirstVisible1=0;
+    private int mLastVisible2=0,mFirstVisible2=0;
 
     private static final int INVALID_POSITION = -1;
 
@@ -53,6 +54,9 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager {
     private Integer mDecoratedChildHeight;
 
     private final int mOrientation;
+    /**
+     * 无限循环
+     */
     private final boolean mCircleLayout;
 
     private int mPendingScrollPosition;
@@ -248,7 +252,6 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager {
      * @param state    Transient state of RecyclerView
      * @return distance that we actually scrolled by
      */
-    public boolean canScrollBy=false;
 
     @CallSuper
     protected int scrollBy(final int diff, @NonNull final RecyclerView.Recycler recycler, @NonNull final RecyclerView.State state) {
@@ -538,36 +541,40 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager {
         final int centerItem = Math.round(absCurrentScrollPosition);
         final int firstVisible = Math.max(centerItem - mLayoutHelper.mMaxVisibleItems - 1, 0);
         final int lastVisible = Math.min(centerItem + mLayoutHelper.mMaxVisibleItems + 1, mItemsCount - 1);
-
         if (null == view.getParent()) {
             addView(view);
             measureChildWithMargins(view, 0, 0);
 
             //5.0以下的手机会产生错位再次判断
             if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
-                if (VERTICAL == mOrientation) {
-                    if(lastVisible!=mLastVisible || firstVisible!=mFirstVisible){
-                        view.setVisibility(View.GONE);
-                    }else{
-                        view.setVisibility(View.VISIBLE);
-                    }
+                if(firstVisible>mLastVisible1 || firstVisible<mFirstVisible1){
+                    view.setVisibility(View.GONE);
+                }else if((firstVisible!=mFirstVisible1 && lastVisible!=mLastVisible1) && mCircleLayout ||(firstVisible!=mFirstVisible1 || lastVisible!=mLastVisible1)){
+                    view.setVisibility(View.GONE);
                 }else{
-                    if(lastVisible>mLastVisible || firstVisible<mFirstVisible){
-                        view.setVisibility(View.GONE);
-                    }else{
-                        view.setVisibility(View.VISIBLE);
-                    }
+                    view.setVisibility(View.VISIBLE);
                 }
 
-                mLastVisible=lastVisible;
-                mFirstVisible=firstVisible;
+                mLastVisible1=lastVisible;
+                mFirstVisible1=firstVisible;
             }
         } else {
             if (childMeasuringNeeded) {
                 measureChildWithMargins(view, 0, 0);
+                //5.0以下的手机会产生错位再次判断
+                if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    if(firstVisible>mLastVisible2 || firstVisible<mFirstVisible2){
+                        view.setVisibility(View.GONE);
+                    }else if(firstVisible!=mFirstVisible2 || lastVisible!=mLastVisible2 && mCircleLayout ){
+                        view.setVisibility(View.GONE);
+                    }else{
+                        view.setVisibility(View.VISIBLE);
+                    }
+                    mLastVisible2=lastVisible;
+                    mFirstVisible2=firstVisible;
+                }
             }
         }
-
         return view;
     }
 
