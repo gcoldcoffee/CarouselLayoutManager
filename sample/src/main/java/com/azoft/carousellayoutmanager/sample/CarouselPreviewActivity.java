@@ -76,6 +76,9 @@ public class CarouselPreviewActivity extends Activity {
 
         adapter.setLayoutManager(layoutManager);
 
+        /**
+         * 自动选中中间View
+         */
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
