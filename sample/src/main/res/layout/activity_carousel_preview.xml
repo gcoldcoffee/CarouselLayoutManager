@@ -49,7 +49,7 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/list_vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
+                    android:layout_height="270dp"
                     android:overScrollMode="never"
                     android:scrollbars="none"
                     android:layout_centerInParent="true" />
