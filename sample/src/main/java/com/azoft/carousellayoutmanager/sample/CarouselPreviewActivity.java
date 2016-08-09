@@ -5,23 +5,26 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
-import com.azoft.carousellayoutmanager.sample.databinding.ItemViewBinding;
+
 import java.util.Random;
 
 
-public class CarouselPreviewActivity extends AppCompatActivity {
+public class CarouselPreviewActivity extends Activity {
 
     private Activity mActivity;
+    private RecyclerView recyclerView;
+//    private TestAdapter adapter;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -31,39 +34,22 @@ public class CarouselPreviewActivity extends AppCompatActivity {
 
         mActivity=this;
 
-        final TestAdapter adapter = new TestAdapter();
-        adapter.setContext(mActivity);
+        recyclerView=(RecyclerView) findViewById(R.id.list_horizontal);
+        initRecyclerView(recyclerView, new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, false));
 
-        initRecyclerView((RecyclerView) findViewById(R.id.list_horizontal), new CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, false), adapter);
+        initRecyclerView((RecyclerView) findViewById(R.id.list_vertical), new CarouselLayoutManager(CarouselLayoutManager.VERTICAL, true));
 
-        initRecyclerView((RecyclerView)findViewById(R.id.list_vertical), new CarouselLayoutManager(CarouselLayoutManager.VERTICAL, true), adapter);
-
-        findViewById(R.id.fab_scroll).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                final int itemToRemove = adapter.mItemsCount;
-                if (10 != itemToRemove) {
-                    adapter.mItemsCount++;
-                    adapter.notifyItemInserted(itemToRemove);
-                }
-            }
-        });
-
-        findViewById(R.id.fab_change_data).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                final int itemToRemove = adapter.mItemsCount - 1;
-                if (0 <= itemToRemove) {
-                    adapter.mItemsCount--;
-                    adapter.notifyItemRemoved(itemToRemove);
-                }
-            }
-        });
     }
 
-    private void initRecyclerView(final RecyclerView recyclerView, final CarouselLayoutManager layoutManager, final TestAdapter adapter) {
+    public void initRecyclerView(final RecyclerView recyclerView, final CarouselLayoutManager layoutManager) {
+
+        final TestAdapter adapter= new TestAdapter();
+        adapter.setContext(mActivity);
+
         // enable zoom effect. this line can be customized
         layoutManager.setPostLayoutListener(new CarouselZoomPostLayoutListener());
+
+        layoutManager.setMaxVisibleItems(2);
 
         recyclerView.setLayoutManager(layoutManager);
         // we expect only fixed sized item for now
@@ -79,22 +65,39 @@ public class CarouselPreviewActivity extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        //final int value = adapter.mPosition[adapterPosition];
-                        //adapter.mPosition[adapterPosition] = (value % 10) + (value / 10 + 1) * 10;
-                       // adapter.notifyItemChanged(adapterPosition);
-
                         //5.0以下的手机会不会主动刷新到界面,需要调用此方法
-                        if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
                             adapter.notifyDataSetChanged();
                         }
                     }
-                },50);
+                }, 50);
             }
         });
+
+        adapter.setLayoutManager(layoutManager);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                recyclerView.scrollToPosition(adapter.getItemCount()/2);
+            }
+        }, 100);
+
     }
 
-    private static final class TestAdapter extends RecyclerView.Adapter<TestViewHolder> {
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 1:
+                    break;
+            }
+        }
+    };
 
+
+    private  class TestAdapter extends RecyclerView.Adapter<TestViewHolder> {
         @SuppressWarnings("UnsecureRandomNumberGeneration")
         private final Random mRandom = new Random();
         private final int[] mColors = new int[10];
@@ -103,9 +106,13 @@ public class CarouselPreviewActivity extends AppCompatActivity {
 
         private Context context;
 
+        CarouselLayoutManager layoutManager;
+
+        public void setLayoutManager(CarouselLayoutManager layoutManager) {
+            this.layoutManager = layoutManager;
+        }
+
         private TestAdapter() {
-//            mColors = new int[10];
-//            mPosition = new int[10];
             for (int i = 0; 10 > i; ++i) {
                 //noinspection MagicNumber
                 mColors[i] = Color.argb(255, mRandom.nextInt(256), mRandom.nextInt(256), mRandom.nextInt(256));
@@ -118,18 +125,30 @@ public class CarouselPreviewActivity extends AppCompatActivity {
         }
         @Override
         public TestViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
-            return new TestViewHolder(ItemViewBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view, parent, false);
+            return new TestViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(final TestViewHolder holder, final int position) {
-            holder.mItemViewBinding.cItem1.setText(String.valueOf(mPosition[position]));
-            holder.mItemViewBinding.cItem2.setText(String.valueOf(mPosition[position]));
+            holder.c_item_1.setText(String.valueOf(mPosition[position]));
+            holder.c_item_2.setText(String.valueOf(mPosition[position]));
             holder.itemView.setBackgroundColor(mColors[position]);
+
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(context,""+String.valueOf(mPosition[position]),Toast.LENGTH_SHORT).show();
+//                    recyclerView.smoothScrollToPosition(position);
+                    if(layoutManager.getOrientation()==CarouselLayoutManager.VERTICAL){
+                        if ((int) holder.itemView.getY() > 0 && holder.itemView.getHeight() / 2 > (int) holder.itemView.getY()) {
+                            Toast.makeText(context, "" + String.valueOf(mPosition[position]), Toast.LENGTH_SHORT).show();
+                        }
+                    }else if(layoutManager.getOrientation()==CarouselLayoutManager.HORIZONTAL){
+                        if ((int) holder.itemView.getX() > 0 && holder.itemView.getWidth() / 2 > (int) holder.itemView.getX()) {
+                            Toast.makeText(context, "" + String.valueOf(mPosition[position]), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
                 }
             });
         }
@@ -142,12 +161,15 @@ public class CarouselPreviewActivity extends AppCompatActivity {
 
     private static class TestViewHolder extends RecyclerView.ViewHolder {
 
-        private final ItemViewBinding mItemViewBinding;
+        private  View view;
+        private TextView c_item_1;
+        private TextView c_item_2;
 
-        TestViewHolder(final ItemViewBinding itemViewBinding) {
-            super(itemViewBinding.getRoot());
+        TestViewHolder(final View view) {
+            super(view);
 
-            mItemViewBinding = itemViewBinding;
+            c_item_1 = (TextView) view.findViewById(R.id.c_item_1);
+            c_item_2 = (TextView) view.findViewById(R.id.c_item_2);
         }
     }
 }

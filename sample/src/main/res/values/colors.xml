@@ -3,4 +3,13 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+
+    <!--半透明-->
+    <color name="black_transparent1">#44000000</color>
+    <color name="vp_controlview_bg2">#22000000</color>
+    <color name="vp_controlview_bg3">#11000000</color>
+    <color name="vp_controlview_bg4">#10000000</color>
+
+    <color name="bg_transparent">#00000000</color>
 </resources>

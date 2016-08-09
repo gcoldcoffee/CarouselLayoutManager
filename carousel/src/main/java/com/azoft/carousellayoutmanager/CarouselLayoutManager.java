@@ -272,7 +272,6 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager {
             mLayoutHelper.mScrollOffset -= resultScroll;
         } else {
             final int maxOffset = getMaxScrollOffset();
-
             if (0 > mLayoutHelper.mScrollOffset + diff) {
                 resultScroll = -mLayoutHelper.mScrollOffset; //to make it 0
             } else if (mLayoutHelper.mScrollOffset + diff > maxOffset) {
@@ -433,7 +432,7 @@ public class CarouselLayoutManager extends RecyclerView.LayoutManager {
         }
     }
 
-//    @SuppressWarnings("MethodWithTooManyParameters")
+    @SuppressWarnings("MethodWithTooManyParameters")
     private void fillChildItem(final int start, final int top, final int end, final int bottom, @NonNull final LayoutOrder layoutOrder, @NonNull final RecyclerView.Recycler recycler, final int i, final boolean childMeasuringNeeded) {
         final View view = bindChild(layoutOrder.mItemAdapterPosition, recycler, childMeasuringNeeded);
         ViewCompat.setElevation(view, i);

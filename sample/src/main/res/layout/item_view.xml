@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     >
-    <data>
+<!--    <data>
 
         <variable
             name="test"
             type="Byte" />
 
-    </data>
+    </data>-->
 
     <RelativeLayout
-        android:layout_width="260dp"
-        android:layout_height="200dp">
+        android:layout_width="220dp"
+        android:layout_height="200dp"
+        >
 
         <TextView
             android:id="@+id/c_item_1"
@@ -33,12 +36,12 @@
             android:layout_centerInParent="true"
             android:background="#0f0" />
 
-        <ProgressBar
+<!--        <ProgressBar
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
+            android:layout_centerInParent="true" />-->
 
     </RelativeLayout>
 
-</layout>
+</RelativeLayout>
